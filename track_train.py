@@ -11,7 +11,8 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 DB_DATA_FILE= "db_data.db"
 TABLE = "db_data"
 
-URL = "http://localhost:5001/jetty/api/v1/status" 
+URL = "https://www.iceportal.de/api1/rs/status"
+# URL = "http://localhost:5001/jetty/api/v1/status" 
 
 def fetch_and_log(csv_file: str, ice_number: str):
     try:
@@ -20,15 +21,27 @@ def fetch_and_log(csv_file: str, ice_number: str):
         
         isodate = datetime.now().isoformat()
         with open(csv_file, mode='a', newline='') as file:
+            
+            connectivity = data.get("connectivity")
             writer = csv.writer(file)
             writer.writerow([
                 isodate,
                 ice_number,
                 1 if data.get("connection") == True else 0,
-                data.get("servicelevel"),
-                data.get("speed"),
+                data.get("serviceLevel"),
+                data.get("gpsStatus"),
                 data.get("latitude"),
                 data.get("longitude"),
+                data.get("series"),
+                data.get("trainType"),
+                data.get("tzn"),
+                data.get("wagonClass"),
+                data.get("speed"),
+                data.get("internet"),
+                connectivity.get("currentState"),
+                connectivity.get("nextState"),
+                connectivity.get("remainingTimeSeconds"),
+                1 if data.get("bapInstalled") == True else 0,
                 data.get("serverTime")
             ])
         print(f"[{isodate}] Daten gesichert.")
@@ -52,9 +65,19 @@ def insert_into_database(csv_file: str):
                 icenumber VARCHAR,
                 connection BOOLEAN,
                 servicelevel VARCHAR,
-                speed DOUBLE,
+                gpsStatus VARCHAR,
                 latitude DOUBLE,
                 longitude DOUBLE,
+                series VARCHAR,
+                trainType VARCHAR,
+                tzn VARCHAR,
+                wagonClass VARCHAR,
+                speed DOUBLE,
+                internet VARCHAR,
+                currentState VARCHAR,
+                nextState VARCHAR,
+                remainingTimeSeconds BIGINT,
+                bapInstalled BOOLEAN,
                 serverTime BIGINT
             );
         """)
@@ -92,7 +115,7 @@ def main(interval: int, file: str, display:bool, icenumber: str):
     try:
         with open(file, mode='x', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(["timestamp", "icenumber", "connection", "servicelevel", "speed", "latitude", "longitude", "serverTime"])
+            writer.writerow(["timestamp", "icenumber", "connection", "servicelevel", "gpsStatus", "latitude", "longitude", "series", "trainType", "tzn", "wagonClass", "speed", "internet", "currentState", "nextState", "remainingTimeSeconds", "bapInstalled","serverTime"])
             print("Header zur CSV Datei hinzugefügt.")
     except FileExistsError:
         pass
