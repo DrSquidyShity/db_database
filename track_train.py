@@ -1,6 +1,4 @@
-import os
 import click
-import csv
 import requests
 import duckdb
 
