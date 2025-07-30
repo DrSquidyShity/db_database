@@ -2,15 +2,29 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-@app.route('/jetty/api/v1/status')
-def status():
+@app.route('/api1/rs/status')
+def status(): 
     return jsonify({
         "connection": True,
-        "servicelevel": "SERVICE",
-        "speed": 185.8000030517578,
-        "longitude": 10.924448,
-        "latitude": 52.432009,
-        "serverTime": 1445351850874
+        "serviceLevel": "AVAILABLE_SERVICE",
+        "gpsStatus": "VALID",
+        "internet": "HIGH",
+        "latitude": 48.40851,
+        "longitude": 11.464837,
+        "tileY": -177,
+        "tileX": 133,
+        "series": "407",
+        "serverTime": 1753873569920,
+        "speed": 88.8,
+        "trainType": "ICE",
+        "tzn": "ICE4714",
+        "wagonClass": "FIRST",
+        "connectivity": {
+            "currentState": "WEAK",
+            "nextState": "UNSTABLE",
+            "remainingTimeSeconds": 1800
+        },
+        "bapInstalled": True
     })
 
 if __name__ == '__main__':
